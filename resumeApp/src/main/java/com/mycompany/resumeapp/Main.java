@@ -12,11 +12,10 @@ public class Main {
     @SneakyThrows
     public static void main(String[] args)  {
         //loosly coupling 
+        //add user created 
         UserDaoInter obj = Context.instanceUserDao();
-        User u = obj.getById(2);
-        u.setName("aziz");
-        obj.updateUser(u);
-        System.out.println(obj.getById(2));
- 
+        User u = new User("tural","genceli","tural@gmail.com","+994553555555");
+        obj.addUser(u);
+        System.out.println(obj.getAll());;
     }
 }

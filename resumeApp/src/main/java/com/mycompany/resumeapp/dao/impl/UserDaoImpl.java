@@ -45,6 +45,7 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         return res;
     } 
     
+    @Override
     public User getById(int userId){
         User u = null;
         try(Connection con = dbConnect();) {
@@ -95,6 +96,22 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
             return false;
         } catch (Exception ex) {
             Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addUser(User u) {
+        try (Connection con = dbConnect()){
+            PreparedStatement statement = con.prepareStatement("INSERT INTO user_table(name,surname,email,phone) VALUES(?,?,?,?)");
+            statement.setString(1, u.getName());
+            statement.setString(2, u.getSurname());
+            statement.setString(3, u.getEmail());
+            statement.setString(4, u.getPhone());
+            statement.execute();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
         }
         return true;
     }
