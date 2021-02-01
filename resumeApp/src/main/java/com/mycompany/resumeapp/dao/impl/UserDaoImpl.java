@@ -1,9 +1,12 @@
 package com.mycompany.resumeapp.dao.impl;
 
+import com.mycompany.bean.Country;
 import com.mycompany.bean.User;
+import com.mycompany.bean.UserSkill;
 import com.mycompany.resumeapp.dao.inter.AbstractDAO;
 import com.mycompany.resumeapp.dao.inter.UserDaoInter;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,20 +22,36 @@ import java.util.logging.Logger;
  */
 public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
 
+    private User getUser(ResultSet resultSet) throws Exception{
+        int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String surname = resultSet.getString("surname");
+                String email = resultSet.getString("email");
+                String phone = resultSet.getString("phone");
+                Date birthdate = resultSet.getDate("birthdate");
+                int birthplace = resultSet.getInt("birthplace_id");
+                int nationality = resultSet.getInt("nationality_id");
+                String birthplaceStr = resultSet.getString("birthplace");
+                String nationalityStr = resultSet.getString("nationality");
+                return new User(id,name,surname,email,phone,birthdate,new Country(birthplace,birthplaceStr,null),new Country(nationality,nationalityStr,null));
+    }
+    
     @Override
     public List<User> getAll() {
         List<User> res = new ArrayList<>();
         try( Connection con = dbConnect();) {
             Statement statement = con.createStatement();
-            statement.execute("SELECT * FROM user_table");
+            statement.execute("select "
+                                + "u.*, "
+                                + "n.nationality as nationality, "
+                                + "c.name as birthplace "
+                                + "FROM user_table u "
+                                + "LEFT join country_table n on u.nationality_id = n.id "
+                                + "LEFT JOIN country_table c on u.birthplace_id = c.id");
             ResultSet resultSet = statement.getResultSet();
             while (resultSet.next()){
-                int id = resultSet.getInt("id");
-                String st = resultSet.getString("name");
-                String st1 = resultSet.getString("surname");
-                String st2 = resultSet.getString("email");
-                String st3 = resultSet.getString("phone");
-                res.add(new User(id, st,st1,st2,st3));
+               User u = getUser(resultSet);
+               res.add(u);
             }
             //close connection
            // con.close();
@@ -50,15 +69,16 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         User u = null;
         try(Connection con = dbConnect();) {
            Statement stmt = con.createStatement();
-           stmt.execute("SELECT *FROM user_table WHERE id="+userId);
-           ResultSet rs = stmt.getResultSet();
-           while(rs.next()){
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String surname = rs.getString("surname");
-                String email = rs.getString("email");
-                String phone = rs.getString("phone");
-                u = new User(id,name,surname,email,phone);
+           stmt.execute("select "
+                            + "u.*, "
+                            + "n.nationality as nationality, "
+                            + "c.name as birthplace "
+                            + "FROM user_table u "
+                            + "LEFT join country_table n on u.nationality_id = n.id "
+                            + "LEFT JOIN country_table c on u.birthplace_id = c.id where u.id="+userId);
+           ResultSet resultSet = stmt.getResultSet();
+           while(resultSet.next()){
+                u = getUser(resultSet);
            }
          
         } catch (Exception ex) {
@@ -114,6 +134,13 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<UserSkill> getAllSkillByUserId(int userId) {
+        List<UserSkill> uSkill = new ArrayList<UserSkill>();
+        
+        return uSkill;
     }
     
 }
