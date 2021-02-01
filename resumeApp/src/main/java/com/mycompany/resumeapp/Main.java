@@ -1,8 +1,8 @@
 package com.mycompany.resumeapp;
 
-import com.mycompany.bean.User;
-import com.mycompany.resumeapp.dao.inter.CountryDaoInter;
-import com.mycompany.resumeapp.dao.inter.UserDaoInter;
+import com.mycompany.resumeapp.dao.inter.EmploymentHistoryDaoInter;
+import com.mycompany.resumeapp.dao.inter.SkillDaoInter;
+import com.mycompany.resumeapp.dao.inter.UserSkillDaoInter;
 import lombok.SneakyThrows;
 /**
  *
@@ -13,10 +13,13 @@ public class Main {
     @SneakyThrows
     public static void main(String[] args)  {
         //loosly coupling 
-        UserDaoInter obj = Context.instanceUserDao();
+        UserSkillDaoInter obj = Context.instanceUserSkillDao();
         //System.out.println(obj.getById(1));
         
-        CountryDaoInter cDao = Context.instanceCountryDao();
-        System.out.println(cDao.getAllCountry());
+       /* EmploymentHistoryDaoInter empHistDao = Context.instanceEmploymentHistoryDao();
+        System.out.println(empHistDao.getAllEmploymentHistoryByUserId(23));*/
+        
+        SkillDaoInter skills = Context.instanceSkillDao();
+        System.out.println(skills.getAllSkill());
     }
 }

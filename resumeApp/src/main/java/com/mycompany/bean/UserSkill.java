@@ -10,7 +10,7 @@ package com.mycompany.bean;
  * @author azizg
  */
 public class UserSkill {
-    private int id;
+    private Integer id;
     private User user;
     private Skill skill;
     private int skillLevel;
@@ -18,18 +18,18 @@ public class UserSkill {
     public UserSkill() {
     }
 
-    public UserSkill(int id, User user, Skill skill, int skillLevel) {
+    public UserSkill(Integer id, User user, Skill skill, int skillLevel) {
         this.id = id;
         this.user = user;
         this.skill = skill;
         this.skillLevel = skillLevel;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

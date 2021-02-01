@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class CountryDaoImpl extends AbstractDAO implements CountryDaoInter   {
     
-      private Country getSkill(ResultSet resultSet) throws Exception{
+      private Country getCountry(ResultSet resultSet) throws Exception{
         int id = resultSet.getInt("id");
         String name = resultSet.getString("name");
         String nationality = resultSet.getNString("nationality");
@@ -35,7 +35,7 @@ public class CountryDaoImpl extends AbstractDAO implements CountryDaoInter   {
             statement.execute("SELECT *FROM country_table");
             ResultSet resultSet = statement.getResultSet();
             while (resultSet.next()){
-               Country country = getSkill(resultSet);
+               Country country = getCountry(resultSet);
                countries.add(country);
             }
             //close connection
