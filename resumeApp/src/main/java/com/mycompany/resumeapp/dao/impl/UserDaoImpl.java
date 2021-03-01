@@ -106,7 +106,7 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
             statement.setString(3, u.getEmail());
             statement.setString(4, u.getPhone());
             statement.setString(5, u.getProfileDesc());
-            statement.setInt(5, u.getId());
+            statement.setInt(6, u.getId());
             statement.execute();
         } catch (SQLException ex) {
             Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
