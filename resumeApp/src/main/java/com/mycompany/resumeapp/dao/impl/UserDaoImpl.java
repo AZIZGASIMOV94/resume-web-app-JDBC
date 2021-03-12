@@ -134,11 +134,12 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     @Override
     public boolean addUser(User u) {
         try (Connection con = dbConnect()){
-            PreparedStatement statement = con.prepareStatement("INSERT INTO user_table(name,surname,email,phone) VALUES(?,?,?,?)");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO user_table(name,surname,email,phone,profileDesc) VALUES(?,?,?,?,?)");
             statement.setString(1, u.getName());
             statement.setString(2, u.getSurname());
             statement.setString(3, u.getEmail());
             statement.setString(4, u.getPhone());
+            statement.setString(5, u.getProfileDesc());
             statement.execute();
         } catch (Exception ex) {
             ex.printStackTrace();
