@@ -17,12 +17,5 @@ public class Main {
         //UserSkillDaoInter obj = Context.instanceUserSkillDao();
         UserDaoInter userDao = Context.instanceUserDao();
         System.out.println(userDao.getById(1));
-        
-        
-       /* EmploymentHistoryDaoInter empHistDao = Context.instanceEmploymentHistoryDao();
-        System.out.println(empHistDao.getAllEmploymentHistoryByUserId(23));*/
-        
-       // SkillDaoInter skills = Context.instanceSkillDao();
-        //System.out.println(skills.getAllSkill());
     }
 }
