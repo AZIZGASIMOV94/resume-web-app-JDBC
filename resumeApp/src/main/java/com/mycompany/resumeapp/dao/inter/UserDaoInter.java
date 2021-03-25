@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface UserDaoInter {
     //get all users
-    public List<User> getAll();
+    public List<User> getAllUsers();
     //get one user
     public User getById(int id);
     //update user
