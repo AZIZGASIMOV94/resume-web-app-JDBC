@@ -41,14 +41,14 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
                                 new Country(nationality,null,nationalityStr));// new Country(birthplace,birthplaceStr,null),
     }
     
-    private UserSkill getUserSkill(ResultSet resultSet) throws Exception{
+    /*private UserSkill getUserSkill(ResultSet resultSet) throws Exception{
         int userId = resultSet.getInt("id");
         int skillId = resultSet.getInt("skill_id");
         String skillName = resultSet.getString("skill_name");
         int skillLevel = resultSet.getInt("skill_level");
         return new UserSkill(null,new User(userId), new Skill(skillId,skillName), skillLevel);
-    }
-    //getAll()
+    }*/
+    
     @Override
     public List<User> getAllUsers() {
         List<User> res = new ArrayList<>();
@@ -124,12 +124,12 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     public boolean deleteUser(int id) {
         try( Connection con = dbConnect();) {
             Statement statement = con.createStatement();
-            statement.executeUpdate("DELETE FROM user_table WHERE id=1");
+            statement.executeUpdate("DELETE FROM user_table WHERE id="+id);
         } catch (SQLException ex) {
-            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
             return false;
         } catch (Exception ex) {
-            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return true;
     }
@@ -151,7 +151,7 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         return true;
     }
 
-    @Override
+   /* @Override
     public List<UserSkill> getAllSkillByUserId(int userId) {
         List<UserSkill> uSkill = new ArrayList<UserSkill>();
      
@@ -180,6 +180,6 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
             Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return uSkill;
-    }
+    }*/
     
 }

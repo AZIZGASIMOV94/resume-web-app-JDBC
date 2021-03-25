@@ -1,26 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.resumeapp.dao.impl;
 
 import com.mycompany.bean.Country;
 import com.mycompany.resumeapp.dao.inter.AbstractDAO;
 import com.mycompany.resumeapp.dao.inter.CountryDaoInter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author azizg
- */
 public class CountryDaoImpl extends AbstractDAO implements CountryDaoInter   {
     
-      private Country getCountry(ResultSet resultSet) throws Exception{
+    private Country getCountry(ResultSet resultSet) throws Exception{
         int id = resultSet.getInt("id");
         String name = resultSet.getString("name");
         String nationality = resultSet.getNString("nationality");
@@ -28,7 +21,7 @@ public class CountryDaoImpl extends AbstractDAO implements CountryDaoInter   {
     }
 
     @Override
-    public List<Country> getAllCountry() {
+    public List<Country> getAllCountries() {
         List<Country> countries = new ArrayList<Country>();
         try( Connection con = dbConnect();) {//try with resource 
             Statement statement = con.createStatement();
@@ -38,12 +31,55 @@ public class CountryDaoImpl extends AbstractDAO implements CountryDaoInter   {
                Country country = getCountry(resultSet);
                countries.add(country);
             }
-            //close connection
            // con.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }        
         return countries;
     }
-    
+
+    @Override
+    public boolean updateCountry(Country c) {
+        try(Connection con = dbConnect();) {
+            PreparedStatement statement = con.prepareStatement("UPDATE country_table SET name=?, nationality=? WHERE id=?");
+            statement.setString(1, c.getName());
+            statement.setString(2, c.getNationality());
+            statement.setInt(3, c.getId());
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addCountry(Country c) {
+        try (Connection con = dbConnect()){
+            PreparedStatement statement = con.prepareStatement("INSERT INTO country_table(name,nationality) VALUES(?,?)");
+            statement.setString(1, c.getName());
+            statement.setString(2, c.getNationality());
+            statement.execute();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteCountry(int id) {
+        try( Connection con = dbConnect();) {
+            Statement statement = con.createStatement();
+            statement.executeUpdate("DELETE FROM country_table WHERE id="+id);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return true;
+    }
 }

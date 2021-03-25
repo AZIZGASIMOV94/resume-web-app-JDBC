@@ -10,7 +10,12 @@ import java.util.List;
  * @author azizg
  */
 public interface SkillDaoInter {
-    //get all skill by user id
-    public List<Skill> getAllSkill();
-
+    //get all skill
+    public List<Skill> getAllSkills();
+    //update skill
+    public boolean updateSkill(Skill l);
+    //insert skill
+    public boolean addSkill(Skill u);
+    //delete skill
+    public boolean deleteSkill(int id);
 }

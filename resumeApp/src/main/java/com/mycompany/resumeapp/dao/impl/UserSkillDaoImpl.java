@@ -14,10 +14,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author azizg
- */
 public class UserSkillDaoImpl extends AbstractDAO implements UserSkillDaoInter{
 
     private UserSkill getUserSkill(ResultSet resultSet) throws Exception{
@@ -60,6 +56,4 @@ public class UserSkillDaoImpl extends AbstractDAO implements UserSkillDaoInter{
         }
         return uSkill;
     }
-
-    
 }

@@ -20,6 +20,6 @@ public interface UserDaoInter {
     //delete user
     public boolean deleteUser(int id);
     //get all skill by user id
-    public List<UserSkill> getAllSkillByUserId(int userId);
+    //public List<UserSkill> getAllSkillByUserId(int userId);
 
 }
