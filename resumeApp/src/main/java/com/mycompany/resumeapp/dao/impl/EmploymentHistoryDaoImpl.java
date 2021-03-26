@@ -97,5 +97,4 @@ public class EmploymentHistoryDaoImpl extends AbstractDAO implements EmploymentH
         }
         return true;
     }
-
 }

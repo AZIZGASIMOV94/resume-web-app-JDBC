@@ -11,5 +11,6 @@ import java.util.List;
 public interface UserSkillDaoInter {
     //get all skill by user id
     public List<UserSkill> getAllSkillByUserId(int userId);
-
+    
+    public boolean deleteUserSkill(int id);
 }

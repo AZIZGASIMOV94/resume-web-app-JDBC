@@ -82,4 +82,23 @@ public class CountryDaoImpl extends AbstractDAO implements CountryDaoInter   {
         }
         return true;
     }
+
+    @Override
+    public List<Country> getAllNationalities() {
+         List<Country> countries = new ArrayList<Country>();
+        try( Connection con = dbConnect();) {//try with resource 
+            Statement statement = con.createStatement();
+            statement.execute("SELECT id, nationality FROM country_table");
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                String nationality = resultSet.getNString("nationality");
+                countries.add(new Country(id,null,nationality));
+            }
+           // con.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }        
+        return countries;
+    }
 }

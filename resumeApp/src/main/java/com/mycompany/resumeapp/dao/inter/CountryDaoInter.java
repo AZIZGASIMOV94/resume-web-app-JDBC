@@ -6,6 +6,8 @@ import java.util.List;
 public interface CountryDaoInter {
     //get all countries
     public List<Country> getAllCountries();
+    //get all countries
+    public List<Country> getAllNationalities();
     //update country
     public boolean updateCountry(Country u);
     //insert country

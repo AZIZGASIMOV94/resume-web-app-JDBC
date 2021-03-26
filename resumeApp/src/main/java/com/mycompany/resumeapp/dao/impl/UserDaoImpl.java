@@ -1,9 +1,7 @@
 package com.mycompany.resumeapp.dao.impl;
 
 import com.mycompany.bean.Country;
-import com.mycompany.bean.Skill;
 import com.mycompany.bean.User;
-import com.mycompany.bean.UserSkill;
 import com.mycompany.resumeapp.dao.inter.AbstractDAO;
 import com.mycompany.resumeapp.dao.inter.UserDaoInter;
 import java.sql.Connection;
@@ -17,11 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * profile_desc
- *
- * @author azizg
- */
 public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     
     private User getUser(ResultSet resultSet) throws Exception{
@@ -31,23 +24,16 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
                 String email = resultSet.getString("email");
                 String phone = resultSet.getString("phone");
                 String profileDesc = resultSet.getString("profile_desc");
+                String address = resultSet.getString("address");
                 Date birthdate = resultSet.getDate("birthdate");
                 int birthplace = resultSet.getInt("birthplace_id");
                 int nationality = resultSet.getInt("nationality_id");
                 String birthplaceStr = resultSet.getString("birthplace");
                 String nationalityStr = resultSet.getString("nationality");
-                return new User(id,name,surname,email,phone,profileDesc,birthdate,
+                return new User(id,name,surname,email,phone,profileDesc,address,birthdate,
                                 new Country(birthplace,birthplaceStr,null),
-                                new Country(nationality,null,nationalityStr));// new Country(birthplace,birthplaceStr,null),
+                                new Country(nationality,null,nationalityStr));
     }
-    
-    /*private UserSkill getUserSkill(ResultSet resultSet) throws Exception{
-        int userId = resultSet.getInt("id");
-        int skillId = resultSet.getInt("skill_id");
-        String skillName = resultSet.getString("skill_name");
-        int skillLevel = resultSet.getInt("skill_level");
-        return new UserSkill(null,new User(userId), new Skill(skillId,skillName), skillLevel);
-    }*/
     
     @Override
     public List<User> getAllUsers() {
@@ -103,19 +89,25 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     @Override
     public boolean updateUser(User u) {
         try(Connection con = dbConnect();) {
-            PreparedStatement statement = con.prepareStatement("UPDATE user_table SET name=?,surname=?,email=?, phone=?, profile_desc=? WHERE id=?");
+            PreparedStatement statement = con.prepareStatement("UPDATE user_table SET name=?,surname=?,email=?, phone=?, profile_desc=?,address=?,birthdate=?,birthplace_id=?,nationality_id=? WHERE id=?");
             statement.setString(1, u.getName());
             statement.setString(2, u.getSurname());
             statement.setString(3, u.getEmail());
             statement.setString(4, u.getPhone());
             statement.setString(5, u.getProfileDesc());
-            statement.setInt(6, u.getId());
+            statement.setString(6, u.getAddress());
+            statement.setString(7, u.getBirthDate().toString());
+            Country country = u.getBirthplace();
+            Country nationality = u.getNationality();
+            statement.setInt(8, country.getId());
+            statement.setInt(9, nationality.getId());
+            statement.setInt(10, u.getId());
             statement.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
             return false;
         } catch (Exception ex) {
-            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return true;
     }
@@ -137,12 +129,14 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     @Override
     public boolean addUser(User u) {
         try (Connection con = dbConnect()){
-            PreparedStatement statement = con.prepareStatement("INSERT INTO user_table(name,surname,email,phone,profile_desc) VALUES(?,?,?,?,?)");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO user_table(name,surname,email,phone,profile_desc,address,birthdate) VALUES(?,?,?,?,?,?,?)");
             statement.setString(1, u.getName());
             statement.setString(2, u.getSurname());
             statement.setString(3, u.getEmail());
             statement.setString(4, u.getPhone());
             statement.setString(5, u.getProfileDesc());
+            statement.setString(6, u.getAddress());
+            statement.setDate(7, u.getBirthDate());
             statement.execute();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -150,6 +144,14 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         }
         return true;
     }
+    
+     /*private UserSkill getUserSkill(ResultSet resultSet) throws Exception{
+        int userId = resultSet.getInt("id");
+        int skillId = resultSet.getInt("skill_id");
+        String skillName = resultSet.getString("skill_name");
+        int skillLevel = resultSet.getInt("skill_level");
+        return new UserSkill(null,new User(userId), new Skill(skillId,skillName), skillLevel);
+    }*/
 
    /* @Override
     public List<UserSkill> getAllSkillByUserId(int userId) {

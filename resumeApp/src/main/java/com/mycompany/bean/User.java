@@ -14,6 +14,7 @@ public class User {
     private String surname;
     private String email;
     private String profileDesc;
+    private String address;
     private String phone;
     private Date birthDate;
     private Country birthplace;
@@ -49,13 +50,14 @@ public class User {
         this.phone = phone;
     }
 
-    public User(int id, String name, String surname, String email, String phone,String profileDesc, Date birthDate, Country birthplace, Country nationality) {
+    public User(int id, String name, String surname, String email, String phone,String profileDesc,String address, Date birthDate, Country birthplace, Country nationality) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phone = phone;
         this.profileDesc = profileDesc;
+        this.address = address;
         this.birthDate = birthDate;
         this.birthplace = birthplace;
         this.nationality = nationality;
@@ -144,8 +146,16 @@ public class User {
         this.profileDesc = profileDesc;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", profileDesc=" + profileDesc + ", phone=" + phone + ", birthDate=" + birthDate + ", birthplace=" + birthplace + ", nationality=" + nationality + ", userSkill=" + userSkill + '}';
+        return "User{" + "id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", profileDesc=" + profileDesc + ", address=" + address + ", phone=" + phone + ", birthDate=" + birthDate + ", birthplace=" + birthplace + ", nationality=" + nationality + ", userSkill=" + userSkill + '}';
     }
 }
