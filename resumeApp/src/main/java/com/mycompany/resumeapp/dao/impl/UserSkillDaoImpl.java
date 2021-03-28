@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -87,5 +86,23 @@ public class UserSkillDaoImpl extends AbstractDAO implements UserSkillDaoInter{
         }
         return b;
         
+    }
+
+    @Override
+    public boolean updateUserSkill(UserSkill usrSkl) {
+        try(Connection con = dbConnect();) {
+            PreparedStatement statement = con.prepareStatement("UPDATE user_skill SET skill_id=?, user_id=?,  skill_level=? WHERE id=?");
+            statement.setInt(2, usrSkl.getSkill().getId());
+            statement.setInt(1, usrSkl.getUser().getId());
+            statement.setInt(3, usrSkl.getSkillLevel());
+            statement.setInt(4, usrSkl.getId());
+            statement.execute();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return true;
     }
 }

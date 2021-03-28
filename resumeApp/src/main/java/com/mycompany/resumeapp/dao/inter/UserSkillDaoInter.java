@@ -16,5 +16,5 @@ public interface UserSkillDaoInter {
     
     public boolean insertUserSkill(UserSkill us);
     
-    
+    public boolean updateUserSkill(UserSkill usrSkl);
 }
