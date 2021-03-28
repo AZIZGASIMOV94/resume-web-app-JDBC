@@ -71,4 +71,21 @@ public class UserSkillDaoImpl extends AbstractDAO implements UserSkillDaoInter{
         }
         return true;
     }
+    
+    @Override
+    public boolean insertUserSkill(UserSkill us){
+        boolean b = true;
+        try (Connection con = dbConnect()){
+            PreparedStatement pst = con.prepareCall("INSERT INTO user_skill(skill_id,user_id,skill_level) values(?,?,?)");
+            pst.setInt(1, us.getSkill().getId());
+            pst.setInt(2, us.getUser().getId());
+            pst.setInt(3, us.getSkillLevel());
+            b = pst.execute();
+        } catch (Exception ex) {
+            b = false;
+            ex.printStackTrace();
+        }
+        return b;
+        
+    }
 }
