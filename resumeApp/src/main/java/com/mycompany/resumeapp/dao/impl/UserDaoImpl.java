@@ -63,6 +63,59 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         return res;
     } 
     
+    
+    @Override
+    public List<User> searchUsers(String name, String surname, Integer nationality) {
+        List<User> res = new ArrayList<>();
+        try( Connection con = dbConnect();) {
+            
+            String sql = "select "
+                     + "u.*, "
+                     + "n.nationality as nationality, "
+                     + "c.name as birthplace "
+                     + "FROM user_table u "
+                     + "LEFT join country_table n on u.nationality_id = n.id "
+                     + "LEFT JOIN country_table c on u.birthplace_id = c.id where 1=1";
+            if(name != null){
+                sql += "and u.name=?";
+            }
+            if(surname != null){
+                sql += "and u.surname=?";
+            }
+            if(nationality != null){
+                sql += "and u.nationality_id=?";
+            }
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            int i=1;
+            if(name != null){
+                pstmt.setString(i, "name");
+                i++;
+            }
+            if(surname != null){
+                pstmt.setString(i, "surname");
+                i++;
+            }
+            if(nationality != null){
+                pstmt.setString(i, "nationality_id");
+     
+            }
+            pstmt.execute();
+            ResultSet resultSet = pstmt.getResultSet();
+            while (resultSet.next()){
+               User u = getUser(resultSet);
+               res.add(u);
+            }
+            //close connection
+           // con.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return res;
+    } 
+    
     @Override
     public User getById(int userId){
         User u = null;

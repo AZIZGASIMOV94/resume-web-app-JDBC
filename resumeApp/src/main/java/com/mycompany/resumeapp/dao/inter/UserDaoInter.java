@@ -19,6 +19,8 @@ public interface UserDaoInter {
     public boolean addUser(User u);
     //delete user
     public boolean deleteUser(int id);
+    
+    public List<User> searchUsers(String name, String surname, Integer Nationality);
     //get all skill by user id
     //public List<UserSkill> getAllSkillByUserId(int userId);
 
