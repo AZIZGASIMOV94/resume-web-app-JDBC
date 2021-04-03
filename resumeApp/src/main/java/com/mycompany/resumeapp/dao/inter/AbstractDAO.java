@@ -8,7 +8,7 @@ public abstract class AbstractDAO {
 
     public Connection dbConnect() throws Exception{
         //in new versions there is not need for this method
-        //Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName("com.mysql.cj.jdbc.Driver");
         String url = "jdbc:mysql://localhost:3306/resume_db";
         String username = "root";
         String password = "";
