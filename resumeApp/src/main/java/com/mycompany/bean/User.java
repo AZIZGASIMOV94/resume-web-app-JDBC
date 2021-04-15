@@ -13,6 +13,7 @@ public class User {
     private String name;
     private String surname;
     private String email;
+    private String password;
     private String profileDesc;
     private String address;
     private String phone;
@@ -22,6 +23,15 @@ public class User {
     private List<UserSkill> userSkill;
 
     public User() {
+    }
+
+    public User(int id, String name, String surname, String email, String password, String phone) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
     }
 
     public User(int id) {
@@ -154,8 +164,29 @@ public class User {
         this.address = address;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", profileDesc=" + profileDesc + ", address=" + address + ", phone=" + phone + ", birthDate=" + birthDate + ", birthplace=" + birthplace + ", nationality=" + nationality + ", userSkill=" + userSkill + '}';
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", profileDesc='" + profileDesc + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", birthDate=" + birthDate +
+                ", birthplace=" + birthplace +
+                ", nationality=" + nationality +
+                ", userSkill=" + userSkill +
+                '}';
     }
 }

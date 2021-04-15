@@ -23,5 +23,9 @@ public interface UserDaoInter {
     public List<User> searchUsers(String name, String surname, Integer Nationality);
     //get all skill by user id
     //public List<UserSkill> getAllSkillByUserId(int userId);
+    //get user according to email and pass
+    public User getUserByEmailAndPass(String email, String password);
+    //get user by email
+    public User getUserByEmail(String email);
 
 }

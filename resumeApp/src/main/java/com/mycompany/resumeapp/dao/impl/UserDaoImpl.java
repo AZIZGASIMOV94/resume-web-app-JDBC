@@ -1,5 +1,6 @@
 package com.mycompany.resumeapp.dao.impl;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.mycompany.bean.Country;
 import com.mycompany.bean.User;
 import com.mycompany.resumeapp.dao.inter.AbstractDAO;
@@ -34,7 +35,25 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
                                 new Country(birthplace,birthplaceStr,null),
                                 new Country(nationality,null,nationalityStr));
     }
-    
+
+    private User getLoggedInUser(ResultSet resultSet) throws Exception{
+        int id = resultSet.getInt("id");
+        String name = resultSet.getString("name");
+        String surname = resultSet.getString("surname");
+        String email = resultSet.getString("email");
+        String phone = resultSet.getString("phone");
+        String password = resultSet.getString("user_password");
+        String profileDesc = resultSet.getString("profile_desc");
+        String address = resultSet.getString("address");
+        Date birthdate = resultSet.getDate("birthdate");
+        int birthplace = resultSet.getInt("birthplace_id");
+        int nationality = resultSet.getInt("nationality_id");
+
+        User user = new User(id,name,surname,email,phone,profileDesc,address,birthdate,null,null);
+        user.setPassword(password);
+        return user;
+    }
+
     @Override
     public List<User> getAllUsers() {
         List<User> res = new ArrayList<>();
@@ -65,7 +84,7 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     
     
     @Override
-    public List<User> searchUsers(String name, String surname, Integer nationality) {
+    public List<User> searchUsers(String name, String surname, Integer nationalityId) {
         List<User> res = new ArrayList<>();
         try( Connection con = dbConnect();) {
             
@@ -75,28 +94,30 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
                      + "c.name as birthplace "
                      + "FROM user_table u "
                      + "LEFT join country_table n on u.nationality_id = n.id "
-                     + "LEFT JOIN country_table c on u.birthplace_id = c.id where 1=1";
-            if(name != null){
-                sql += "and u.name=?";
+                     + "LEFT JOIN country_table c on u.birthplace_id = c.id where 1=1 ";
+            if(name != null && !name.trim().isEmpty()){
+                sql += " and u.name=? ";
             }
-            if(surname != null){
-                sql += "and u.surname=?";
+            if(surname != null && !surname.trim().isEmpty()){
+                
+                sql += " and u.surname=? ";
             }
-            if(nationality != null){
-                sql += "and u.nationality_id=?";
+            if(nationalityId != null ){
+                sql += " and u.nationality_id=? ";
             }
             PreparedStatement pstmt = con.prepareStatement(sql);
+            
             int i=1;
-            if(name != null){
-                pstmt.setString(i, "name");
+            if(name != null && !name.trim().isEmpty()){
+                pstmt.setString(i, name);
                 i++;
             }
-            if(surname != null){
-                pstmt.setString(i, "surname");
+            if(surname != null &&!surname.trim().isEmpty()){
+                pstmt.setString(i, surname);
                 i++;
             }
-            if(nationality != null){
-                pstmt.setString(i, "nationality_id");
+            if(nationalityId != null ){
+                pstmt.setInt(i, nationalityId);
      
             }
             pstmt.execute();
@@ -114,8 +135,42 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         }
         
         return res;
-    } 
-    
+    }
+
+    @Override
+    public User getUserByEmailAndPass(String email, String password) {
+        User result = null;
+        try(Connection con =dbConnect()){
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM user_table where email=? and user_password=?");
+            pstmt.setString(1,email);
+            pstmt.setString(2,password);
+            ResultSet rs =  pstmt.executeQuery();
+            while (rs.next()){
+                result = getLoggedInUser(rs);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public User getUserByEmail(String email){
+        User result = null;
+        try(Connection con =dbConnect()){
+            PreparedStatement pstmt = con.prepareStatement("SELECT * FROM user_table where email=?");
+            pstmt.setString(1,email);
+            ResultSet rs =  pstmt.executeQuery();
+            while (rs.next()){
+                result = getLoggedInUser(rs);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
+
     @Override
     public User getById(int userId){
         User u = null;
@@ -141,8 +196,8 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     
     @Override
     public boolean updateUser(User u) {
-        try(Connection con = dbConnect();) {
-            PreparedStatement statement = con.prepareStatement("UPDATE user_table SET name=?,surname=?,email=?, phone=?, profile_desc=?,address=?,birthdate=?,birthplace_id=?,nationality_id=? WHERE id=?");
+        try(Connection con = dbConnect()) {
+            PreparedStatement statement = con.prepareStatement("UPDATE user_table SET name=?,surname=?,email=?, phone=?, profile_desc=?,address=?,birthdate=?, birthplace_id=?, nationality_id=? WHERE id=?");
             statement.setString(1, u.getName());
             statement.setString(2, u.getSurname());
             statement.setString(3, u.getEmail());
@@ -179,17 +234,18 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         return true;
     }
 
+
+    private BCrypt.Hasher crypt = BCrypt.withDefaults();
+
     @Override
     public boolean addUser(User u) {
         try (Connection con = dbConnect()){
-            PreparedStatement statement = con.prepareStatement("INSERT INTO user_table(name,surname,email,phone,profile_desc,address,birthdate) VALUES(?,?,?,?,?,?,?)");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO user_table(name,surname,email,user_password,phone) VALUES(?,?,?,?,?)");
             statement.setString(1, u.getName());
             statement.setString(2, u.getSurname());
             statement.setString(3, u.getEmail());
-            statement.setString(4, u.getPhone());
-            statement.setString(5, u.getProfileDesc());
-            statement.setString(6, u.getAddress());
-            statement.setDate(7, u.getBirthDate());
+            statement.setString(4, crypt.hashToString(4, u.getPassword().toCharArray()));
+            statement.setString(5, u.getPhone());
             statement.execute();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -197,44 +253,13 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
         }
         return true;
     }
-    
-     /*private UserSkill getUserSkill(ResultSet resultSet) throws Exception{
-        int userId = resultSet.getInt("id");
-        int skillId = resultSet.getInt("skill_id");
-        String skillName = resultSet.getString("skill_name");
-        int skillLevel = resultSet.getInt("skill_level");
-        return new UserSkill(null,new User(userId), new Skill(skillId,skillName), skillLevel);
-    }*/
 
-   /* @Override
-    public List<UserSkill> getAllSkillByUserId(int userId) {
-        List<UserSkill> uSkill = new ArrayList<UserSkill>();
-     
-        try( Connection con = dbConnect();) {
-            PreparedStatement pstatement = con.prepareStatement("SELECT " +
-                                        "	ut.*, " +
-                                        "    usk.skill_id, " +
-                                        "    sk.name as skill_name," +
-                                        "    usk.skill_level as skill_level" +
-                                        "    FROM user_table ut " +
-                                        "    LEFT JOIN user_skill usk on ut.id = usk.user_id " +
-                                        "    LEFT join skill sk on sk.id = usk.skill_id" +
-                                        "    WHERE ut.id = ?");
-            pstatement.setInt(1, userId);
-            pstatement.execute();
-            ResultSet resultSet = pstatement.getResultSet();
-            while (resultSet.next()){
-               UserSkill userSkill = getUserSkill(resultSet);
-               uSkill.add(userSkill);
-            }
-            //close connection
-           // con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return uSkill;
-    }*/
-    
+    public static void main(String[] args) {
+      /*  User u = new User(0,"test","testov","test@mail.ru","+88483434343","Lorem Ipsum","istanbul",null,null,null);
+        u.setPassword("12345");*/
+
+        User u2 = new User(23, "test2", "testov2","test2@mail.ru", "123456", "+994555955858");
+        new UserDaoImpl().addUser(u2);
+        System.out.println("added");
+    }
 }
