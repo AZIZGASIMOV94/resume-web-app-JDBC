@@ -255,9 +255,6 @@ public class UserDaoImpl extends AbstractDAO implements UserDaoInter{
     }
 
     public static void main(String[] args) {
-      /*  User u = new User(0,"test","testov","test@mail.ru","+88483434343","Lorem Ipsum","istanbul",null,null,null);
-        u.setPassword("12345");*/
-
         User u2 = new User(23, "test2", "testov2","test2@mail.ru", "123456", "+994555955858");
         new UserDaoImpl().addUser(u2);
         System.out.println("added");

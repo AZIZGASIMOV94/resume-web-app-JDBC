@@ -1,0 +1,12 @@
+.login_background{
+
+}
+
+.login_fix_{
+    background: #fffdfd40;
+    border: white;
+    padding-top: 172px;
+    color: blue;
+    width: 500px;
+    height: 500px;
+}
